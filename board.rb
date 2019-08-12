@@ -69,7 +69,7 @@ class Board
     def add_bishop
         @board[0][2] = Bishop.new(@b_bishop, B)
         @board[0][5] = Bishop.new(@b_bishop, B)
-        @board[1][2] = Bishop.new(@w_bishop, W)
+        @board[1][3] = Bishop.new(@w_bishop, W)
         @board[7][5] = Bishop.new(@w_bishop, W)
     end
 

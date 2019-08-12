@@ -90,6 +90,7 @@ class Game
         puts ""
 
         if @chess_board.board[row][col].possible_moves(row, col, @chess_board.board, @player_turn).include?([row_new, col_new])
+            check_king_status(row, col)
             if @chess_board.board[row_new][col_new].name == @empty_block
                 temp = @chess_board.board[row][col]
                 @chess_board.board[row][col] = Piece.new(@empty_block)
@@ -100,7 +101,9 @@ class Game
                 puts "OOPS!! the placed is occupied. Please choose different place"
                 get_player_input
             else
+                check_king_status(row, col)
                 piece_taken(row, col, row_new, col_new)
+                check_king_status(row, col)
             end
         else
             puts "Please enter a valid move for #{@chess_board.board[row][col].class.to_s}"
@@ -152,6 +155,41 @@ class Game
         puts ""
         print "#{@white_taken.join("")} "
         puts ""
+    end
+
+    def check_king_status(row, col)
+        if @player_turn == "White"
+            king_location = get_king_location("Black")
+            is_king_under_check(king_location[0], king_location[1], "White", "Black")
+        elsif @player_turn == "Black"
+            king_location = get_king_location("White")
+            is_king_under_check(king_location[0], king_location[1], "Black", "White")
+        end
+    end
+
+    def get_king_location(opp_colour)
+        for i in 0..7
+            for j in 0..7
+                if @chess_board.board[i][j].class.to_s == "King" && @chess_board.board[i][j].colour == opp_colour
+                    return [i,j]
+                end
+            end
+        end
+    end
+
+    def is_king_under_check(king_row, king_col, colour, opp_colour)
+        for i in 0..7
+            for j in 0..7
+                if @chess_board.board[i][j].colour == colour
+                    print [i,j]
+                    puts ""
+                    if @chess_board.board[i][j].possible_moves(i, j, @chess_board.board, @player_turn).include?([king_row, king_col])
+                        puts "#{opp_colour}'s King under check"
+                        return true
+                    end
+                end
+            end
+        end
     end
 
 
